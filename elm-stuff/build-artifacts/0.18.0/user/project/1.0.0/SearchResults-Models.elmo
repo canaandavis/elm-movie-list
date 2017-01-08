@@ -1,0 +1,13 @@
+var _user$project$SearchResults_Models$new = {
+	results: {ctor: '[]'},
+	formValue: '',
+	isSearching: false
+};
+var _user$project$SearchResults_Models$SearchResult = F5(
+	function (a, b, c, d, e) {
+		return {title: a, year: b, imdbID: c, mediaType: d, poster: e};
+	});
+var _user$project$SearchResults_Models$SearchResults = F3(
+	function (a, b, c) {
+		return {results: a, formValue: b, isSearching: c};
+	});

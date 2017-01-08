@@ -1,0 +1,44 @@
+var _user$project$SearchResults_Update$update = F2(
+	function (msg, searchResults) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'UpdateFormInput':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						searchResults,
+						{formValue: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SubmitForm':
+				return _elm_lang$core$String$isEmpty(
+					_elm_lang$core$String$trim(searchResults.formValue)) ? {ctor: '_Tuple2', _0: searchResults, _1: _elm_lang$core$Platform_Cmd$none} : {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						searchResults,
+						{
+							isSearching: true,
+							results: {ctor: '[]'}
+						}),
+					_1: _user$project$SearchResults_Commands$search(searchResults.formValue)
+				};
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							searchResults,
+							{results: _p0._0._0, isSearching: false}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							searchResults,
+							{isSearching: false}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+		}
+	});

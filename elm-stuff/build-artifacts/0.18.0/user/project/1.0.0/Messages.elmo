@@ -1,0 +1,3 @@
+var _user$project$Messages$SearchResultsMsg = function (a) {
+	return {ctor: 'SearchResultsMsg', _0: a};
+};
