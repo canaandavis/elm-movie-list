@@ -13,7 +13,6 @@ searchResultDecoder =
         (field "Title" Decode.string)
         (field "Year" Decode.string)
         (field "imdbID" Decode.string)
-        (field "Type" Decode.string)
         (field "Poster" Decode.string)
 
 
