@@ -2,7 +2,7 @@ module Update exposing (..)
 
 import SearchResults.Update exposing (..)
 import Models exposing (Model)
-import Messages exposing (..)
+import Messages exposing (Msg(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

@@ -9092,11 +9092,24 @@ var _user$project$SearchResults_Update$update = F2(
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'UpdateFormInput':
-				return {
+				var _p1 = _p0._0;
+				return _elm_lang$core$Native_Utils.eq(
+					_elm_lang$core$String$length(
+						_elm_lang$core$String$trim(_p1)),
+					0) ? {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						searchResults,
-						{formValue: _p0._0}),
+						{
+							formValue: _p1,
+							results: {ctor: '[]'}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				} : {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						searchResults,
+						{formValue: _p1}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SubmitForm':
@@ -9161,31 +9174,47 @@ var _user$project$SearchResults_List$viewSearchResult = function (searchResult) 
 	var poster = _elm_lang$core$Native_Utils.eq(searchResult.poster, 'N/A') ? './static/default.jpg' : searchResult.poster;
 	return A2(
 		_elm_lang$html$Html$li,
-		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('search-item'),
+			_1: {ctor: '[]'}
+		},
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$h3,
-				{ctor: '[]'},
+				_elm_lang$html$Html$div,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(searchResult.title),
-					_1: {ctor: '[]'}
-				}),
+					_0: _elm_lang$html$Html_Attributes$class('poster'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'backgroundImage',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										'url(',
+										A2(_elm_lang$core$Basics_ops['++'], poster, ')'))
+								},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$img,
+					_elm_lang$html$Html$h3,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$src(poster),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$alt('movie poster'),
-							_1: {ctor: '[]'}
-						}
-					},
-					{ctor: '[]'}),
+						_0: _elm_lang$html$Html$text(searchResult.title),
+						_1: {ctor: '[]'}
+					}),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -9196,6 +9225,14 @@ var _user$project$SearchResults_List$viewSearchResults = function (searchResults
 		{ctor: '[]'},
 		A2(_elm_lang$core$List$map, _user$project$SearchResults_List$viewSearchResult, searchResults));
 };
+var _user$project$SearchResults_List$submitWithOptions = function (msg) {
+	var config = {stopPropagation: false, preventDefault: true};
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		config,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
 var _user$project$SearchResults_List$viewSearchForm = A2(
 	_elm_lang$html$Html$form,
 	{
@@ -9203,7 +9240,7 @@ var _user$project$SearchResults_List$viewSearchForm = A2(
 		_0: _elm_lang$html$Html_Attributes$class('form'),
 		_1: {
 			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onSubmit(_user$project$SearchResults_Messages$SubmitForm),
+			_0: _user$project$SearchResults_List$submitWithOptions(_user$project$SearchResults_Messages$SubmitForm),
 			_1: {ctor: '[]'}
 		}
 	},
@@ -9243,6 +9280,9 @@ var _user$project$SearchResults_List$viewSearchForm = A2(
 		}
 	});
 var _user$project$SearchResults_List$view = function (searchResults) {
+	var showContainer = (_elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$List$length(searchResults.results),
+		0) > 0) || searchResults.isSearching;
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -9255,12 +9295,32 @@ var _user$project$SearchResults_List$view = function (searchResults) {
 			_0: _user$project$SearchResults_List$viewSearchForm,
 			_1: {
 				ctor: '::',
-				_0: _user$project$SearchResults_List$viewSearchResults(searchResults.results),
-				_1: {
-					ctor: '::',
-					_0: _user$project$SearchResults_List$viewSearching(searchResults.isSearching),
-					_1: {ctor: '[]'}
-				}
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$classList(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'search-results-container', _1: true},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'expanded', _1: showContainer},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _user$project$SearchResults_List$viewSearchResults(searchResults.results),
+						_1: {
+							ctor: '::',
+							_0: _user$project$SearchResults_List$viewSearching(searchResults.isSearching),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
 			}
 		});
 };

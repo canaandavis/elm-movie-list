@@ -1,6 +1,6 @@
 module SearchResults.Update exposing (..)
 
-import SearchResults.Messages exposing (..)
+import SearchResults.Messages exposing (Msg(..))
 import SearchResults.Commands exposing (search)
 import SearchResults.Models exposing (SearchResults)
 
@@ -9,7 +9,10 @@ update : Msg -> SearchResults -> ( SearchResults, Cmd Msg )
 update msg searchResults =
     case msg of
         UpdateFormInput text ->
-            ( { searchResults | formValue = text }, Cmd.none )
+            if String.length (String.trim text) == 0 then
+                ( { searchResults | formValue = text, results = [] }, Cmd.none )
+            else
+                ( { searchResults | formValue = text }, Cmd.none )
 
         SubmitForm ->
             if String.isEmpty (String.trim searchResults.formValue) then
@@ -22,3 +25,6 @@ update msg searchResults =
 
         NewSearchResults (Err error) ->
             ( { searchResults | isSearching = False }, Cmd.none )
+
+        _ ->
+            ( searchResults, Cmd.none )
