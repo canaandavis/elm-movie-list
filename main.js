@@ -13000,15 +13000,16 @@ var _user$project$SearchResults_Models$SearchResults = F3(
 
 var _user$project$Movies_Models$new = {
 	allMovies: {ctor: '[]'},
-	eagerAdding: _elm_lang$core$Maybe$Nothing
+	eagerAdding: _elm_lang$core$Maybe$Nothing,
+	eagerDeleting: _elm_lang$core$Maybe$Nothing
 };
 var _user$project$Movies_Models$Movie = F5(
 	function (a, b, c, d, e) {
 		return {id: a, title: b, year: c, imdbID: d, poster: e};
 	});
-var _user$project$Movies_Models$Movies = F2(
-	function (a, b) {
-		return {allMovies: a, eagerAdding: b};
+var _user$project$Movies_Models$Movies = F3(
+	function (a, b, c) {
+		return {allMovies: a, eagerAdding: b, eagerDeleting: c};
 	});
 
 var _user$project$Models$initialModel = {searchResults: _user$project$SearchResults_Models$new, movies: _user$project$Movies_Models$new};
@@ -13017,6 +13018,9 @@ var _user$project$Models$Model = F2(
 		return {searchResults: a, movies: b};
 	});
 
+var _user$project$Messages$MOVIES_DeleteComplete = function (a) {
+	return {ctor: 'MOVIES_DeleteComplete', _0: a};
+};
 var _user$project$Messages$MOVIES_SaveComplete = function (a) {
 	return {ctor: 'MOVIES_SaveComplete', _0: a};
 };
@@ -13135,6 +13139,20 @@ var _user$project$SearchResults_Update$update = F2(
 	});
 
 var _user$project$Movies_Commands$movieUrl = 'http://localhost:3000/movies';
+var _user$project$Movies_Commands$deleteUrl = function (movie) {
+	var _p0 = movie.id;
+	if (_p0.ctor === 'Nothing') {
+		return _user$project$Movies_Commands$movieUrl;
+	} else {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$Movies_Commands$movieUrl,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'/',
+				_elm_lang$core$Basics$toString(_p0._0)));
+	}
+};
 var _user$project$Movies_Commands$movieEncoder = function (movie) {
 	return _elm_lang$core$Json_Encode$object(
 		{
@@ -13170,6 +13188,26 @@ var _user$project$Movies_Commands$movieEncoder = function (movie) {
 				}
 			}
 		});
+};
+var _user$project$Movies_Commands$deleteMovieRequest = function (movie) {
+	return _elm_lang$http$Http$request(
+		{
+			body: _elm_lang$http$Http$jsonBody(
+				_user$project$Movies_Commands$movieEncoder(movie)),
+			expect: _elm_lang$http$Http$expectJson(
+				_elm_lang$core$Json_Decode$succeed(movie)),
+			headers: {ctor: '[]'},
+			method: 'DELETE',
+			timeout: _elm_lang$core$Maybe$Nothing,
+			url: _user$project$Movies_Commands$deleteUrl(movie),
+			withCredentials: false
+		});
+};
+var _user$project$Movies_Commands$deleteMovie = function (movie) {
+	return A2(
+		_elm_lang$http$Http$send,
+		_user$project$Messages$MOVIES_DeleteComplete,
+		_user$project$Movies_Commands$deleteMovieRequest(movie));
 };
 var _user$project$Movies_Commands$movieDecoder = A6(
 	_elm_lang$core$Json_Decode$map5,
@@ -13231,18 +13269,22 @@ var _user$project$Movies_Update$update = F2(
 					_1: _user$project$Movies_Commands$saveMovie(_p1)
 				};
 			case 'MOVIES_RemoveMovie':
+				var _p2 = _p0._0;
 				var updatedMovies = A2(
 					_elm_lang$core$List$filter,
-					function (movie) {
-						return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p0._0);
+					function (m) {
+						return !_elm_lang$core$Native_Utils.eq(m.id, _p2.id);
 					},
 					movies.allMovies);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						movies,
-						{allMovies: updatedMovies}),
-					_1: _elm_lang$core$Platform_Cmd$none
+						{
+							allMovies: updatedMovies,
+							eagerDeleting: _elm_lang$core$Maybe$Just(_p2)
+						}),
+					_1: _user$project$Movies_Commands$deleteMovie(_p2)
 				};
 			case 'MOVIES_CurrentMoviesFetched':
 				if (_p0._0.ctor === 'Ok') {
@@ -13258,11 +13300,11 @@ var _user$project$Movies_Update$update = F2(
 				}
 			case 'MOVIES_SaveComplete':
 				if (_p0._0.ctor === 'Ok') {
-					var _p2 = _p0._0._0;
+					var _p3 = _p0._0._0;
 					var updatedMovies = A2(
 						_elm_lang$core$List$map,
 						function (m) {
-							return _elm_lang$core$Native_Utils.eq(m.imdbID, _p2.imdbID) ? _p2 : m;
+							return _elm_lang$core$Native_Utils.eq(m.imdbID, _p3.imdbID) ? _p3 : m;
 						},
 						movies.allMovies);
 					return {
@@ -13274,14 +13316,14 @@ var _user$project$Movies_Update$update = F2(
 					};
 				} else {
 					var updatedMovies = function () {
-						var _p3 = movies.eagerAdding;
-						if (_p3.ctor === 'Nothing') {
+						var _p4 = movies.eagerAdding;
+						if (_p4.ctor === 'Nothing') {
 							return movies.allMovies;
 						} else {
 							return A2(
 								_elm_lang$core$List$filter,
 								function (movie) {
-									return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p3._0);
+									return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p4._0);
 								},
 								movies.allMovies);
 						}
@@ -13291,6 +13333,39 @@ var _user$project$Movies_Update$update = F2(
 						_0: _elm_lang$core$Native_Utils.update(
 							movies,
 							{allMovies: updatedMovies, eagerAdding: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'MOVIES_DeleteComplete':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							movies,
+							{eagerDeleting: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					var updatedMovies = function () {
+						var _p5 = movies.eagerDeleting;
+						if (_p5.ctor === 'Nothing') {
+							return movies.allMovies;
+						} else {
+							return A2(
+								_elm_lang$core$Basics_ops['++'],
+								movies.allMovies,
+								{
+									ctor: '::',
+									_0: _p5._0,
+									_1: {ctor: '[]'}
+								});
+						}
+					}();
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							movies,
+							{allMovies: updatedMovies, eagerDeleting: _elm_lang$core$Maybe$Nothing}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				}
@@ -13517,6 +13592,33 @@ var _user$project$SearchResults_List$view = function (searchResults) {
 		});
 };
 
+var _user$project$Movies_List$viewDeleteButton = function (movie) {
+	var _p0 = movie.id;
+	if (_p0.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		return A2(
+			_elm_lang$html$Html$button,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('Delete Movie'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(
+						_user$project$Messages$MOVIES_RemoveMovie(movie)),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Delete Movie'),
+				_1: {ctor: '[]'}
+			});
+	}
+};
 var _user$project$Movies_List$viewMovieItem = function (movie) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -13565,7 +13667,11 @@ var _user$project$Movies_List$viewMovieItem = function (movie) {
 						_0: _elm_lang$html$Html$text(movie.title),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: _user$project$Movies_List$viewDeleteButton(movie),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
@@ -13625,7 +13731,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Messages.Msg":{"args":[],"tags":{"MOVIES_SaveComplete":["Result.Result Http.Error Movies.Models.Movie"],"MOVIES_RemoveMovie":["Movies.Models.ImdbId"],"MOVIES_FetchCurrentMovies":[],"MOVIES_AddMovie":["Movies.Models.Movie"],"SEARCH_RESULTS_SubmitForm":[],"SEARCH_RESULTS_NewSearchResults":["Result.Result Http.Error (List SearchResults.Models.SearchResult)"],"SEARCH_RESULTS_UpdateFormInput":["SearchResults.Models.SearchFormValue"],"MOVIES_CurrentMoviesFetched":["Result.Result Http.Error (List Movies.Models.Movie)"]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Movies.Models.ImdbId":{"args":[],"type":"String"},"SearchResults.Models.SearchResult":{"args":[],"type":"{ title : String, year : String, imdbID : String, poster : String }"},"Movies.Models.Movie":{"args":[],"type":"{ id : Maybe.Maybe Int , title : String , year : String , imdbID : Movies.Models.ImdbId , poster : String }"},"SearchResults.Models.SearchFormValue":{"args":[],"type":"String"}},"message":"Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Messages.Msg":{"args":[],"tags":{"MOVIES_SaveComplete":["Result.Result Http.Error Movies.Models.Movie"],"MOVIES_DeleteComplete":["Result.Result Http.Error Movies.Models.Movie"],"MOVIES_RemoveMovie":["Movies.Models.Movie"],"MOVIES_FetchCurrentMovies":[],"MOVIES_AddMovie":["Movies.Models.Movie"],"SEARCH_RESULTS_SubmitForm":[],"SEARCH_RESULTS_NewSearchResults":["Result.Result Http.Error (List SearchResults.Models.SearchResult)"],"SEARCH_RESULTS_UpdateFormInput":["SearchResults.Models.SearchFormValue"],"MOVIES_CurrentMoviesFetched":["Result.Result Http.Error (List Movies.Models.Movie)"]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Movies.Models.ImdbId":{"args":[],"type":"String"},"SearchResults.Models.SearchResult":{"args":[],"type":"{ title : String, year : String, imdbID : String, poster : String }"},"Movies.Models.Movie":{"args":[],"type":"{ id : Maybe.Maybe Int , title : String , year : String , imdbID : Movies.Models.ImdbId , poster : String }"},"SearchResults.Models.SearchFormValue":{"args":[],"type":"String"}},"message":"Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

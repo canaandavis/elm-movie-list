@@ -1,12 +1,13 @@
 var _user$project$Movies_Models$new = {
 	allMovies: {ctor: '[]'},
-	eagerAdding: _elm_lang$core$Maybe$Nothing
+	eagerAdding: _elm_lang$core$Maybe$Nothing,
+	eagerDeleting: _elm_lang$core$Maybe$Nothing
 };
 var _user$project$Movies_Models$Movie = F5(
 	function (a, b, c, d, e) {
 		return {id: a, title: b, year: c, imdbID: d, poster: e};
 	});
-var _user$project$Movies_Models$Movies = F2(
-	function (a, b) {
-		return {allMovies: a, eagerAdding: b};
+var _user$project$Movies_Models$Movies = F3(
+	function (a, b, c) {
+		return {allMovies: a, eagerAdding: b, eagerDeleting: c};
 	});

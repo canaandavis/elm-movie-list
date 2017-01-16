@@ -16,13 +16,13 @@ update msg movies =
             , (MovieCommands.saveMovie movie)
             )
 
-        MOVIES_RemoveMovie imdbID ->
+        MOVIES_RemoveMovie movie ->
             let
                 updatedMovies =
                     movies.allMovies
-                        |> List.filter (\movie -> movie.imdbID /= imdbID)
+                        |> List.filter (\m -> m.id /= movie.id)
             in
-                ( { movies | allMovies = updatedMovies }, Cmd.none )
+                ( { movies | allMovies = updatedMovies, eagerDeleting = Just movie }, (MovieCommands.deleteMovie movie) )
 
         MOVIES_CurrentMoviesFetched (Ok results) ->
             ( { movies | allMovies = results }, Cmd.none )
@@ -56,6 +56,21 @@ update msg movies =
                                 |> List.filter (\movie -> movie.imdbID /= eagerAdding)
             in
                 ( { movies | allMovies = updatedMovies, eagerAdding = Nothing }, Cmd.none )
+
+        MOVIES_DeleteComplete (Ok movie) ->
+            ( { movies | eagerDeleting = Nothing }, Cmd.none )
+
+        MOVIES_DeleteComplete (Err error) ->
+            let
+                updatedMovies =
+                    case movies.eagerDeleting of
+                        Nothing ->
+                            movies.allMovies
+
+                        Just eagerDeleting ->
+                            movies.allMovies ++ [ eagerDeleting ]
+            in
+                ( { movies | allMovies = updatedMovies, eagerDeleting = Nothing }, Cmd.none )
 
         _ ->
             ( movies, Cmd.none )

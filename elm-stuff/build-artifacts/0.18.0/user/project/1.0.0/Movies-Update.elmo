@@ -22,18 +22,22 @@ var _user$project$Movies_Update$update = F2(
 					_1: _user$project$Movies_Commands$saveMovie(_p1)
 				};
 			case 'MOVIES_RemoveMovie':
+				var _p2 = _p0._0;
 				var updatedMovies = A2(
 					_elm_lang$core$List$filter,
-					function (movie) {
-						return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p0._0);
+					function (m) {
+						return !_elm_lang$core$Native_Utils.eq(m.id, _p2.id);
 					},
 					movies.allMovies);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						movies,
-						{allMovies: updatedMovies}),
-					_1: _elm_lang$core$Platform_Cmd$none
+						{
+							allMovies: updatedMovies,
+							eagerDeleting: _elm_lang$core$Maybe$Just(_p2)
+						}),
+					_1: _user$project$Movies_Commands$deleteMovie(_p2)
 				};
 			case 'MOVIES_CurrentMoviesFetched':
 				if (_p0._0.ctor === 'Ok') {
@@ -49,11 +53,11 @@ var _user$project$Movies_Update$update = F2(
 				}
 			case 'MOVIES_SaveComplete':
 				if (_p0._0.ctor === 'Ok') {
-					var _p2 = _p0._0._0;
+					var _p3 = _p0._0._0;
 					var updatedMovies = A2(
 						_elm_lang$core$List$map,
 						function (m) {
-							return _elm_lang$core$Native_Utils.eq(m.imdbID, _p2.imdbID) ? _p2 : m;
+							return _elm_lang$core$Native_Utils.eq(m.imdbID, _p3.imdbID) ? _p3 : m;
 						},
 						movies.allMovies);
 					return {
@@ -65,14 +69,14 @@ var _user$project$Movies_Update$update = F2(
 					};
 				} else {
 					var updatedMovies = function () {
-						var _p3 = movies.eagerAdding;
-						if (_p3.ctor === 'Nothing') {
+						var _p4 = movies.eagerAdding;
+						if (_p4.ctor === 'Nothing') {
 							return movies.allMovies;
 						} else {
 							return A2(
 								_elm_lang$core$List$filter,
 								function (movie) {
-									return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p3._0);
+									return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p4._0);
 								},
 								movies.allMovies);
 						}
@@ -82,6 +86,39 @@ var _user$project$Movies_Update$update = F2(
 						_0: _elm_lang$core$Native_Utils.update(
 							movies,
 							{allMovies: updatedMovies, eagerAdding: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'MOVIES_DeleteComplete':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							movies,
+							{eagerDeleting: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					var updatedMovies = function () {
+						var _p5 = movies.eagerDeleting;
+						if (_p5.ctor === 'Nothing') {
+							return movies.allMovies;
+						} else {
+							return A2(
+								_elm_lang$core$Basics_ops['++'],
+								movies.allMovies,
+								{
+									ctor: '::',
+									_0: _p5._0,
+									_1: {ctor: '[]'}
+								});
+						}
+					}();
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							movies,
+							{allMovies: updatedMovies, eagerDeleting: _elm_lang$core$Maybe$Nothing}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				}

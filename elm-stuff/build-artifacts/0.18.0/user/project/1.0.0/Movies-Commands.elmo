@@ -1,4 +1,18 @@
 var _user$project$Movies_Commands$movieUrl = 'http://localhost:3000/movies';
+var _user$project$Movies_Commands$deleteUrl = function (movie) {
+	var _p0 = movie.id;
+	if (_p0.ctor === 'Nothing') {
+		return _user$project$Movies_Commands$movieUrl;
+	} else {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$Movies_Commands$movieUrl,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'/',
+				_elm_lang$core$Basics$toString(_p0._0)));
+	}
+};
 var _user$project$Movies_Commands$movieEncoder = function (movie) {
 	return _elm_lang$core$Json_Encode$object(
 		{
@@ -34,6 +48,26 @@ var _user$project$Movies_Commands$movieEncoder = function (movie) {
 				}
 			}
 		});
+};
+var _user$project$Movies_Commands$deleteMovieRequest = function (movie) {
+	return _elm_lang$http$Http$request(
+		{
+			body: _elm_lang$http$Http$jsonBody(
+				_user$project$Movies_Commands$movieEncoder(movie)),
+			expect: _elm_lang$http$Http$expectJson(
+				_elm_lang$core$Json_Decode$succeed(movie)),
+			headers: {ctor: '[]'},
+			method: 'DELETE',
+			timeout: _elm_lang$core$Maybe$Nothing,
+			url: _user$project$Movies_Commands$deleteUrl(movie),
+			withCredentials: false
+		});
+};
+var _user$project$Movies_Commands$deleteMovie = function (movie) {
+	return A2(
+		_elm_lang$http$Http$send,
+		_user$project$Messages$MOVIES_DeleteComplete,
+		_user$project$Movies_Commands$deleteMovieRequest(movie));
 };
 var _user$project$Movies_Commands$movieDecoder = A6(
 	_elm_lang$core$Json_Decode$map5,

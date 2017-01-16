@@ -1,4 +1,4 @@
-module Movies.Commands exposing (getCurrentMovies, saveMovie)
+module Movies.Commands exposing (getCurrentMovies, saveMovie, deleteMovie)
 
 import Json.Encode as Encode
 import Json.Decode as Decode exposing (field)
@@ -56,3 +56,32 @@ saveMovie : Movie -> Cmd Msg
 saveMovie movie =
     saveNewMovieRequest movie
         |> Http.send MOVIES_SaveComplete
+
+
+deleteUrl : Movie -> String
+deleteUrl movie =
+    case movie.id of
+        Nothing ->
+            movieUrl
+
+        Just id ->
+            movieUrl ++ "/" ++ (toString id)
+
+
+deleteMovieRequest : Movie -> Http.Request Movie
+deleteMovieRequest movie =
+    Http.request
+        { body = movieEncoder movie |> Http.jsonBody
+        , expect = Http.expectJson (Decode.succeed movie)
+        , headers = []
+        , method = "DELETE"
+        , timeout = Nothing
+        , url = deleteUrl movie
+        , withCredentials = False
+        }
+
+
+deleteMovie : Movie -> Cmd Msg
+deleteMovie movie =
+    deleteMovieRequest movie
+        |> Http.send MOVIES_DeleteComplete
