@@ -5,7 +5,6 @@ type alias SearchResult =
     { title : String
     , year : String
     , imdbID : String
-    , mediaType : String
     , poster : String
     }
 

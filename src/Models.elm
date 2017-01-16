@@ -1,16 +1,17 @@
 module Models exposing (..)
 
-import SearchResults.Models exposing (SearchResults, new)
+import SearchResults.Models as SearchResults exposing (SearchResults)
+import Movies.Models as Movies exposing (Movies)
 
 
 type alias Model =
     { searchResults : SearchResults
-    , alertMessage : String
+    , movies : Movies
     }
 
 
 initialModel : Model
 initialModel =
-    { searchResults = new
-    , alertMessage = ""
+    { searchResults = SearchResults.new
+    , movies = Movies.new
     }

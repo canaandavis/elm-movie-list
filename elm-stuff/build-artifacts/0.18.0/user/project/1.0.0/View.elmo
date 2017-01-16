@@ -18,11 +18,12 @@ var _user$project$View$view = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$map,
-					_user$project$Messages$SearchResultsMsg,
-					_user$project$SearchResults_List$view(model.searchResults)),
-				_1: {ctor: '[]'}
+				_0: _user$project$SearchResults_List$view(model.searchResults),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Movies_List$view(model.movies),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };

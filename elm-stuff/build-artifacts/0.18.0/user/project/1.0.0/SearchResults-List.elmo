@@ -53,7 +53,28 @@ var _user$project$SearchResults_List$viewSearchResult = function (searchResult) 
 						_0: _elm_lang$html$Html$text(searchResult.title),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('add-movie-button'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									_user$project$Messages$MOVIES_AddMovie(
+										A5(_user$project$Movies_Models$Movie, _elm_lang$core$Maybe$Nothing, searchResult.title, searchResult.year, searchResult.imdbID, searchResult.poster))),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('+ Add Movie'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
@@ -71,52 +92,58 @@ var _user$project$SearchResults_List$submitWithOptions = function (msg) {
 		config,
 		_elm_lang$core$Json_Decode$succeed(msg));
 };
-var _user$project$SearchResults_List$viewSearchForm = A2(
-	_elm_lang$html$Html$form,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('form'),
-		_1: {
+var _user$project$SearchResults_List$viewSearchForm = function (formValue) {
+	return A2(
+		_elm_lang$html$Html$form,
+		{
 			ctor: '::',
-			_0: _user$project$SearchResults_List$submitWithOptions(_user$project$SearchResults_Messages$SubmitForm),
-			_1: {ctor: '[]'}
-		}
-	},
-	{
-		ctor: '::',
-		_0: A2(
-			_elm_lang$html$Html$input,
-			{
+			_0: _elm_lang$html$Html_Attributes$class('form'),
+			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$type_('text'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onInput(_user$project$SearchResults_Messages$UpdateFormInput),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$placeholder('Search By Title'),
-						_1: {ctor: '[]'}
-					}
-				}
-			},
-			{ctor: '[]'}),
-		_1: {
+				_0: _user$project$SearchResults_List$submitWithOptions(_user$project$Messages$SEARCH_RESULTS_SubmitForm),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
 			ctor: '::',
 			_0: A2(
 				_elm_lang$html$Html$input,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$type_('submit'),
+					_0: _elm_lang$html$Html_Attributes$type_('text'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$value('submit'),
-						_1: {ctor: '[]'}
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$Messages$SEARCH_RESULTS_UpdateFormInput),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$placeholder('Search By Title'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$value(formValue),
+								_1: {ctor: '[]'}
+							}
+						}
 					}
 				},
 				{ctor: '[]'}),
-			_1: {ctor: '[]'}
-		}
-	});
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('submit'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$value('submit'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$SearchResults_List$view = function (searchResults) {
 	var showContainer = (_elm_lang$core$Native_Utils.cmp(
 		_elm_lang$core$List$length(searchResults.results),
@@ -130,7 +157,7 @@ var _user$project$SearchResults_List$view = function (searchResults) {
 		},
 		{
 			ctor: '::',
-			_0: _user$project$SearchResults_List$viewSearchForm,
+			_0: _user$project$SearchResults_List$viewSearchForm(searchResults.formValue),
 			_1: {
 				ctor: '::',
 				_0: A2(

@@ -12989,46 +12989,67 @@ var _user$project$SearchResults_Models$new = {
 	formValue: '',
 	isSearching: false
 };
-var _user$project$SearchResults_Models$SearchResult = F5(
-	function (a, b, c, d, e) {
-		return {title: a, year: b, imdbID: c, mediaType: d, poster: e};
+var _user$project$SearchResults_Models$SearchResult = F4(
+	function (a, b, c, d) {
+		return {title: a, year: b, imdbID: c, poster: d};
 	});
 var _user$project$SearchResults_Models$SearchResults = F3(
 	function (a, b, c) {
 		return {results: a, formValue: b, isSearching: c};
 	});
 
-var _user$project$Models$initialModel = {searchResults: _user$project$SearchResults_Models$new, alertMessage: ''};
-var _user$project$Models$Model = F2(
+var _user$project$Movies_Models$new = {
+	allMovies: {ctor: '[]'},
+	eagerAdding: _elm_lang$core$Maybe$Nothing
+};
+var _user$project$Movies_Models$Movie = F5(
+	function (a, b, c, d, e) {
+		return {id: a, title: b, year: c, imdbID: d, poster: e};
+	});
+var _user$project$Movies_Models$Movies = F2(
 	function (a, b) {
-		return {searchResults: a, alertMessage: b};
+		return {allMovies: a, eagerAdding: b};
 	});
 
-var _user$project$SearchResults_Messages$NewSearchResults = function (a) {
-	return {ctor: 'NewSearchResults', _0: a};
-};
-var _user$project$SearchResults_Messages$SubmitForm = {ctor: 'SubmitForm'};
-var _user$project$SearchResults_Messages$UpdateFormInput = function (a) {
-	return {ctor: 'UpdateFormInput', _0: a};
-};
+var _user$project$Models$initialModel = {searchResults: _user$project$SearchResults_Models$new, movies: _user$project$Movies_Models$new};
+var _user$project$Models$Model = F2(
+	function (a, b) {
+		return {searchResults: a, movies: b};
+	});
 
-var _user$project$Messages$SearchResultsMsg = function (a) {
-	return {ctor: 'SearchResultsMsg', _0: a};
+var _user$project$Messages$MOVIES_SaveComplete = function (a) {
+	return {ctor: 'MOVIES_SaveComplete', _0: a};
+};
+var _user$project$Messages$MOVIES_CurrentMoviesFetched = function (a) {
+	return {ctor: 'MOVIES_CurrentMoviesFetched', _0: a};
+};
+var _user$project$Messages$MOVIES_FetchCurrentMovies = {ctor: 'MOVIES_FetchCurrentMovies'};
+var _user$project$Messages$MOVIES_RemoveMovie = function (a) {
+	return {ctor: 'MOVIES_RemoveMovie', _0: a};
+};
+var _user$project$Messages$MOVIES_AddMovie = function (a) {
+	return {ctor: 'MOVIES_AddMovie', _0: a};
+};
+var _user$project$Messages$SEARCH_RESULTS_NewSearchResults = function (a) {
+	return {ctor: 'SEARCH_RESULTS_NewSearchResults', _0: a};
+};
+var _user$project$Messages$SEARCH_RESULTS_SubmitForm = {ctor: 'SEARCH_RESULTS_SubmitForm'};
+var _user$project$Messages$SEARCH_RESULTS_UpdateFormInput = function (a) {
+	return {ctor: 'SEARCH_RESULTS_UpdateFormInput', _0: a};
 };
 
 var _user$project$SearchResults_Commands$baseSearchUrl = 'http://www.omdbapi.com/?r=json&s=';
-var _user$project$SearchResults_Commands$searchResultDecoder = A6(
-	_elm_lang$core$Json_Decode$map5,
+var _user$project$SearchResults_Commands$searchResultDecoder = A5(
+	_elm_lang$core$Json_Decode$map4,
 	_user$project$SearchResults_Models$SearchResult,
 	A2(_elm_lang$core$Json_Decode$field, 'Title', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'Year', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'imdbID', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'Type', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'Poster', _elm_lang$core$Json_Decode$string));
 var _user$project$SearchResults_Commands$search = function (searchFormValue) {
 	return A2(
 		_elm_lang$http$Http$send,
-		_user$project$SearchResults_Messages$NewSearchResults,
+		_user$project$Messages$SEARCH_RESULTS_NewSearchResults,
 		A2(
 			_elm_lang$http$Http$get,
 			A2(_elm_lang$core$Basics_ops['++'], _user$project$SearchResults_Commands$baseSearchUrl, searchFormValue),
@@ -13046,7 +13067,7 @@ var _user$project$SearchResults_Update$update = F2(
 	function (msg, searchResults) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
-			case 'UpdateFormInput':
+			case 'SEARCH_RESULTS_UpdateFormInput':
 				var _p1 = _p0._0;
 				return _elm_lang$core$Native_Utils.eq(
 					_elm_lang$core$String$length(
@@ -13067,7 +13088,7 @@ var _user$project$SearchResults_Update$update = F2(
 						{formValue: _p1}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'SubmitForm':
+			case 'SEARCH_RESULTS_SubmitForm':
 				return _elm_lang$core$String$isEmpty(
 					_elm_lang$core$String$trim(searchResults.formValue)) ? {ctor: '_Tuple2', _0: searchResults, _1: _elm_lang$core$Platform_Cmd$none} : {
 					ctor: '_Tuple2',
@@ -13079,7 +13100,7 @@ var _user$project$SearchResults_Update$update = F2(
 						}),
 					_1: _user$project$SearchResults_Commands$search(searchResults.formValue)
 				};
-			default:
+			case 'SEARCH_RESULTS_NewSearchResults':
 				if (_p0._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
@@ -13097,21 +13118,210 @@ var _user$project$SearchResults_Update$update = F2(
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				}
+			case 'MOVIES_AddMovie':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						searchResults,
+						{
+							formValue: '',
+							results: {ctor: '[]'}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: searchResults, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+
+var _user$project$Movies_Commands$movieUrl = 'http://localhost:3000/movies';
+var _user$project$Movies_Commands$movieEncoder = function (movie) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'title',
+				_1: _elm_lang$core$Json_Encode$string(movie.title)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'year',
+					_1: _elm_lang$core$Json_Encode$string(movie.year)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'imdbID',
+						_1: _elm_lang$core$Json_Encode$string(movie.imdbID)
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'poster',
+							_1: _elm_lang$core$Json_Encode$string(movie.poster)
+						},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Movies_Commands$movieDecoder = A6(
+	_elm_lang$core$Json_Decode$map5,
+	_user$project$Movies_Models$Movie,
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int)),
+	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'year', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'imdbID', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'poster', _elm_lang$core$Json_Decode$string));
+var _user$project$Movies_Commands$getCurrentMovies = A2(
+	_elm_lang$http$Http$send,
+	_user$project$Messages$MOVIES_CurrentMoviesFetched,
+	A2(
+		_elm_lang$http$Http$get,
+		_user$project$Movies_Commands$movieUrl,
+		_elm_lang$core$Json_Decode$list(_user$project$Movies_Commands$movieDecoder)));
+var _user$project$Movies_Commands$saveNewMovieRequest = function (movie) {
+	return _elm_lang$http$Http$request(
+		{
+			body: _elm_lang$http$Http$jsonBody(
+				_user$project$Movies_Commands$movieEncoder(movie)),
+			expect: _elm_lang$http$Http$expectJson(_user$project$Movies_Commands$movieDecoder),
+			headers: {ctor: '[]'},
+			method: 'POST',
+			timeout: _elm_lang$core$Maybe$Nothing,
+			url: _user$project$Movies_Commands$movieUrl,
+			withCredentials: false
+		});
+};
+var _user$project$Movies_Commands$saveMovie = function (movie) {
+	return A2(
+		_elm_lang$http$Http$send,
+		_user$project$Messages$MOVIES_SaveComplete,
+		_user$project$Movies_Commands$saveNewMovieRequest(movie));
+};
+
+var _user$project$Movies_Update$update = F2(
+	function (msg, movies) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'MOVIES_AddMovie':
+				var _p1 = _p0._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						movies,
+						{
+							allMovies: A2(
+								_elm_lang$core$Basics_ops['++'],
+								movies.allMovies,
+								{
+									ctor: '::',
+									_0: _p1,
+									_1: {ctor: '[]'}
+								}),
+							eagerAdding: _elm_lang$core$Maybe$Just(_p1.imdbID)
+						}),
+					_1: _user$project$Movies_Commands$saveMovie(_p1)
+				};
+			case 'MOVIES_RemoveMovie':
+				var updatedMovies = A2(
+					_elm_lang$core$List$filter,
+					function (movie) {
+						return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p0._0);
+					},
+					movies.allMovies);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						movies,
+						{allMovies: updatedMovies}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'MOVIES_CurrentMoviesFetched':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							movies,
+							{allMovies: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: movies, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			case 'MOVIES_SaveComplete':
+				if (_p0._0.ctor === 'Ok') {
+					var _p2 = _p0._0._0;
+					var updatedMovies = A2(
+						_elm_lang$core$List$map,
+						function (m) {
+							return _elm_lang$core$Native_Utils.eq(m.imdbID, _p2.imdbID) ? _p2 : m;
+						},
+						movies.allMovies);
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							movies,
+							{allMovies: updatedMovies, eagerAdding: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					var updatedMovies = function () {
+						var _p3 = movies.eagerAdding;
+						if (_p3.ctor === 'Nothing') {
+							return movies.allMovies;
+						} else {
+							return A2(
+								_elm_lang$core$List$filter,
+								function (movie) {
+									return !_elm_lang$core$Native_Utils.eq(movie.imdbID, _p3._0);
+								},
+								movies.allMovies);
+						}
+					}();
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							movies,
+							{allMovies: updatedMovies, eagerAdding: _elm_lang$core$Maybe$Nothing}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			default:
+				return {ctor: '_Tuple2', _0: movies, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 
 var _user$project$Update$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		var _p1 = A2(_user$project$SearchResults_Update$update, _p0._0, model.searchResults);
+		var _p0 = A2(_user$project$Movies_Update$update, msg, model.movies);
+		var updatedMovies = _p0._0;
+		var moviesCmd = _p0._1;
+		var _p1 = A2(_user$project$SearchResults_Update$update, msg, model.searchResults);
 		var updatedSearchResults = _p1._0;
-		var cmd = _p1._1;
+		var searchResultsCmd = _p1._1;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{searchResults: updatedSearchResults}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Messages$SearchResultsMsg, cmd)
+				{searchResults: updatedSearchResults, movies: updatedMovies}),
+			_1: _elm_lang$core$Platform_Cmd$batch(
+				{
+					ctor: '::',
+					_0: searchResultsCmd,
+					_1: {
+						ctor: '::',
+						_0: moviesCmd,
+						_1: {ctor: '[]'}
+					}
+				})
 		};
 	});
 
@@ -13170,7 +13380,28 @@ var _user$project$SearchResults_List$viewSearchResult = function (searchResult) 
 						_0: _elm_lang$html$Html$text(searchResult.title),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('add-movie-button'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									_user$project$Messages$MOVIES_AddMovie(
+										A5(_user$project$Movies_Models$Movie, _elm_lang$core$Maybe$Nothing, searchResult.title, searchResult.year, searchResult.imdbID, searchResult.poster))),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('+ Add Movie'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
@@ -13188,52 +13419,58 @@ var _user$project$SearchResults_List$submitWithOptions = function (msg) {
 		config,
 		_elm_lang$core$Json_Decode$succeed(msg));
 };
-var _user$project$SearchResults_List$viewSearchForm = A2(
-	_elm_lang$html$Html$form,
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$class('form'),
-		_1: {
+var _user$project$SearchResults_List$viewSearchForm = function (formValue) {
+	return A2(
+		_elm_lang$html$Html$form,
+		{
 			ctor: '::',
-			_0: _user$project$SearchResults_List$submitWithOptions(_user$project$SearchResults_Messages$SubmitForm),
-			_1: {ctor: '[]'}
-		}
-	},
-	{
-		ctor: '::',
-		_0: A2(
-			_elm_lang$html$Html$input,
-			{
+			_0: _elm_lang$html$Html_Attributes$class('form'),
+			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$type_('text'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onInput(_user$project$SearchResults_Messages$UpdateFormInput),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$placeholder('Search By Title'),
-						_1: {ctor: '[]'}
-					}
-				}
-			},
-			{ctor: '[]'}),
-		_1: {
+				_0: _user$project$SearchResults_List$submitWithOptions(_user$project$Messages$SEARCH_RESULTS_SubmitForm),
+				_1: {ctor: '[]'}
+			}
+		},
+		{
 			ctor: '::',
 			_0: A2(
 				_elm_lang$html$Html$input,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$type_('submit'),
+					_0: _elm_lang$html$Html_Attributes$type_('text'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$value('submit'),
-						_1: {ctor: '[]'}
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$Messages$SEARCH_RESULTS_UpdateFormInput),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$placeholder('Search By Title'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$value(formValue),
+								_1: {ctor: '[]'}
+							}
+						}
 					}
 				},
 				{ctor: '[]'}),
-			_1: {ctor: '[]'}
-		}
-	});
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('submit'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$value('submit'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$SearchResults_List$view = function (searchResults) {
 	var showContainer = (_elm_lang$core$Native_Utils.cmp(
 		_elm_lang$core$List$length(searchResults.results),
@@ -13247,7 +13484,7 @@ var _user$project$SearchResults_List$view = function (searchResults) {
 		},
 		{
 			ctor: '::',
-			_0: _user$project$SearchResults_List$viewSearchForm,
+			_0: _user$project$SearchResults_List$viewSearchForm(searchResults.formValue),
 			_1: {
 				ctor: '::',
 				_0: A2(
@@ -13280,6 +13517,72 @@ var _user$project$SearchResults_List$view = function (searchResults) {
 		});
 };
 
+var _user$project$Movies_List$viewMovieItem = function (movie) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('movie'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('poster'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'backgroundImage',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										'url(',
+										A2(_elm_lang$core$Basics_ops['++'], movie.poster, ')'))
+								},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('title'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(movie.title),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Movies_List$viewMovieList = function (movies) {
+	return A2(_elm_lang$core$List$map, _user$project$Movies_List$viewMovieItem, movies);
+};
+var _user$project$Movies_List$view = function (movies) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('movie-list'),
+			_1: {ctor: '[]'}
+		},
+		_user$project$Movies_List$viewMovieList(movies.allMovies));
+};
+
 var _user$project$View$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -13300,16 +13603,17 @@ var _user$project$View$view = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$map,
-					_user$project$Messages$SearchResultsMsg,
-					_user$project$SearchResults_List$view(model.searchResults)),
-				_1: {ctor: '[]'}
+				_0: _user$project$SearchResults_List$view(model.searchResults),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Movies_List$view(model.movies),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
 
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Models$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Models$initialModel, _1: _user$project$Movies_Commands$getCurrentMovies};
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{
 		init: _user$project$Main$init,
@@ -13321,7 +13625,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Messages.Msg":{"args":[],"tags":{"SearchResultsMsg":["SearchResults.Messages.Msg"]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"SearchResults.Messages.Msg":{"args":[],"tags":{"SubmitForm":[],"NewSearchResults":["Result.Result Http.Error (List SearchResults.Models.SearchResult)"],"UpdateFormInput":["SearchResults.Models.SearchFormValue"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"SearchResults.Models.SearchResult":{"args":[],"type":"{ title : String , year : String , imdbID : String , mediaType : String , poster : String }"},"SearchResults.Models.SearchFormValue":{"args":[],"type":"String"}},"message":"Messages.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Messages.Msg":{"args":[],"tags":{"MOVIES_SaveComplete":["Result.Result Http.Error Movies.Models.Movie"],"MOVIES_RemoveMovie":["Movies.Models.ImdbId"],"MOVIES_FetchCurrentMovies":[],"MOVIES_AddMovie":["Movies.Models.Movie"],"SEARCH_RESULTS_SubmitForm":[],"SEARCH_RESULTS_NewSearchResults":["Result.Result Http.Error (List SearchResults.Models.SearchResult)"],"SEARCH_RESULTS_UpdateFormInput":["SearchResults.Models.SearchFormValue"],"MOVIES_CurrentMoviesFetched":["Result.Result Http.Error (List Movies.Models.Movie)"]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Movies.Models.ImdbId":{"args":[],"type":"String"},"SearchResults.Models.SearchResult":{"args":[],"type":"{ title : String, year : String, imdbID : String, poster : String }"},"Movies.Models.Movie":{"args":[],"type":"{ id : Maybe.Maybe Int , title : String , year : String , imdbID : Movies.Models.ImdbId , poster : String }"},"SearchResults.Models.SearchFormValue":{"args":[],"type":"String"}},"message":"Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
