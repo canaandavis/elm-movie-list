@@ -1,5 +1,0 @@
-var _user$project$Models$initialModel = {searchResults: _user$project$SearchResults_Models$new, movies: _user$project$Movies_Models$new};
-var _user$project$Models$Model = F2(
-	function (a, b) {
-		return {searchResults: a, movies: b};
-	});

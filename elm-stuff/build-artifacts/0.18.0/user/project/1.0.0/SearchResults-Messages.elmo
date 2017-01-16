@@ -1,7 +1,0 @@
-var _user$project$SearchResults_Messages$NewSearchResults = function (a) {
-	return {ctor: 'NewSearchResults', _0: a};
-};
-var _user$project$SearchResults_Messages$SubmitForm = {ctor: 'SubmitForm'};
-var _user$project$SearchResults_Messages$UpdateFormInput = function (a) {
-	return {ctor: 'UpdateFormInput', _0: a};
-};
