@@ -5,7 +5,8 @@
   "author": "Canaan Davis <canaandavis@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "elm-live src/Main.elm --output=main.js --debug"
+    "dev": "elm-live src/Main.elm --output=main.js --debug",
+    "api": "json-server --watch db.json"
   },
   "dependencies": {
     "json-server": "^0.9.4"
