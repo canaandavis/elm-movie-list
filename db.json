@@ -1,0 +1,53 @@
+{
+  "movies": [
+    {
+      "id": 1,
+      "title": "Jaws",
+      "year": "1975",
+      "imdbID": "tt0073195",
+      "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BNDcxODkyMjY4MF5BMl5BanBnXkFtZTgwOTk5NTc5MDE@._V1_SX300.jpg"
+    },
+    {
+      "title": "They Live",
+      "year": "1988",
+      "imdbID": "tt0096256",
+      "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ3MjM3ODU1NV5BMl5BanBnXkFtZTgwMjU3NDU2MTE@._V1_SX300.jpg",
+      "id": 2
+    },
+    {
+      "title": "Scream",
+      "year": "1996",
+      "imdbID": "tt0117571",
+      "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMjA2NjU5MTg5OF5BMl5BanBnXkFtZTgwOTkyMzQxMDE@._V1_SX300.jpg",
+      "id": 3
+    },
+    {
+      "title": "Valley Girl",
+      "year": "1983",
+      "imdbID": "tt0086525",
+      "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMjA4NzI5OTgyMV5BMl5BanBnXkFtZTgwODgwNjU1MDE@._V1_SX300.jpg",
+      "id": 4
+    },
+    {
+      "title": "Twin Peaks",
+      "year": "1990–1991",
+      "imdbID": "tt0098936",
+      "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMTExNzk2NjcxNTNeQTJeQWpwZ15BbWU4MDcxOTczOTIx._V1_SX300.jpg",
+      "id": 5
+    },
+    {
+      "title": "Star Wars: Episode IV - A New Hope",
+      "year": "1977",
+      "imdbID": "tt0076759",
+      "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BYzQ2OTk4N2QtOGQwNy00MmI3LWEwNmEtOTk0OTY3NDk2MGJkL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SX300.jpg",
+      "id": 6
+    },
+    {
+      "title": "Star Wars: Episode V - The Empire Strikes Back",
+      "year": "1980",
+      "imdbID": "tt0080684",
+      "poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BYmViY2M2MTYtY2MzOS00YjQ1LWIzYmEtOTBiNjhlMGM0NjZjXkEyXkFqcGdeQXVyNDYyMDk5MTU@._V1_SX300.jpg",
+      "id": 7
+    }
+  ]
+}

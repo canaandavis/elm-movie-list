@@ -3,13 +3,13 @@ module SearchResults.Commands exposing (..)
 import Json.Encode as Encode
 import Json.Decode as Decode exposing (field)
 import SearchResults.Models exposing (SearchResult, SearchFormValue)
-import SearchResults.Messages exposing (..)
+import Messages exposing (..)
 import Http
 
 
 searchResultDecoder : Decode.Decoder SearchResult
 searchResultDecoder =
-    Decode.map5 SearchResult
+    Decode.map4 SearchResult
         (field "Title" Decode.string)
         (field "Year" Decode.string)
         (field "imdbID" Decode.string)
@@ -26,4 +26,4 @@ search searchFormValue =
     Decode.list searchResultDecoder
         |> Decode.at [ "Search" ]
         |> Http.get (baseSearchUrl ++ searchFormValue)
-        |> Http.send NewSearchResults
+        |> Http.send SEARCH_RESULTS_NewSearchResults

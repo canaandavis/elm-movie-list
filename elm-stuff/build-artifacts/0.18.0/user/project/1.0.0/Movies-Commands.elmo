@@ -1,0 +1,72 @@
+var _user$project$Movies_Commands$movieUrl = 'http://localhost:3000/movies';
+var _user$project$Movies_Commands$movieEncoder = function (movie) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'title',
+				_1: _elm_lang$core$Json_Encode$string(movie.title)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'year',
+					_1: _elm_lang$core$Json_Encode$string(movie.year)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'imdbID',
+						_1: _elm_lang$core$Json_Encode$string(movie.imdbID)
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'poster',
+							_1: _elm_lang$core$Json_Encode$string(movie.poster)
+						},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Movies_Commands$movieDecoder = A6(
+	_elm_lang$core$Json_Decode$map5,
+	_user$project$Movies_Models$Movie,
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int)),
+	A2(_elm_lang$core$Json_Decode$field, 'title', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'year', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'imdbID', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'poster', _elm_lang$core$Json_Decode$string));
+var _user$project$Movies_Commands$getCurrentMovies = A2(
+	_elm_lang$http$Http$send,
+	_user$project$Messages$MOVIES_CurrentMoviesFetched,
+	A2(
+		_elm_lang$http$Http$get,
+		_user$project$Movies_Commands$movieUrl,
+		_elm_lang$core$Json_Decode$list(_user$project$Movies_Commands$movieDecoder)));
+var _user$project$Movies_Commands$saveNewMovieRequest = function (movie) {
+	return _elm_lang$http$Http$request(
+		{
+			body: _elm_lang$http$Http$jsonBody(
+				_user$project$Movies_Commands$movieEncoder(movie)),
+			expect: _elm_lang$http$Http$expectJson(_user$project$Movies_Commands$movieDecoder),
+			headers: {ctor: '[]'},
+			method: 'POST',
+			timeout: _elm_lang$core$Maybe$Nothing,
+			url: _user$project$Movies_Commands$movieUrl,
+			withCredentials: false
+		});
+};
+var _user$project$Movies_Commands$saveMovie = function (movie) {
+	return A2(
+		_elm_lang$http$Http$send,
+		_user$project$Messages$MOVIES_SaveComplete,
+		_user$project$Movies_Commands$saveNewMovieRequest(movie));
+};

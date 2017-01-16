@@ -9,11 +9,12 @@ import Models exposing (Model, initialModel)
 import Messages exposing (..)
 import Update exposing (..)
 import View exposing (..)
+import Movies.Commands as MovieCommands
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel, Cmd.none )
+    ( initialModel, MovieCommands.getCurrentMovies )
 
 
 main : Program Never Model Msg

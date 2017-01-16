@@ -1,0 +1,13 @@
+{
+  "name": "movie-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Canaan Davis <canaandavis@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "elm-live src/Main.elm --output=main.js --debug"
+  },
+  "dependencies": {
+    "json-server": "^0.9.4"
+  }
+}

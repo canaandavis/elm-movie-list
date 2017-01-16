@@ -1,16 +1,23 @@
 module Update exposing (..)
 
-import SearchResults.Update exposing (..)
+import SearchResults.Update
+import Movies.Update
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        SearchResultsMsg subMsg ->
-            let
-                ( updatedSearchResults, cmd ) =
-                    SearchResults.Update.update subMsg model.searchResults
-            in
-                ( { model | searchResults = updatedSearchResults }, Cmd.map SearchResultsMsg cmd )
+    let
+        ( updatedSearchResults, searchResultsCmd ) =
+            SearchResults.Update.update msg model.searchResults
+
+        ( updatedMovies, moviesCmd ) =
+            Movies.Update.update msg model.movies
+    in
+        ( { model
+            | searchResults = updatedSearchResults
+            , movies = updatedMovies
+          }
+        , Cmd.batch [ searchResultsCmd, moviesCmd ]
+        )

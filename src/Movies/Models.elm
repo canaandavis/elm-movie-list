@@ -6,7 +6,8 @@ type alias ImdbId =
 
 
 type alias Movie =
-    { title : String
+    { id : Maybe Int
+    , title : String
     , year : String
     , imdbID : ImdbId
     , poster : String
@@ -15,10 +16,12 @@ type alias Movie =
 
 type alias Movies =
     { allMovies : List Movie
+    , eagerAdding : Maybe ImdbId
     }
 
 
 new : Movies
 new =
     { allMovies = []
+    , eagerAdding = Nothing
     }

@@ -1,6 +1,7 @@
 module SearchResults.List exposing (..)
 
-import SearchResults.Messages exposing (Msg(..))
+import Movies.Models exposing (Movie)
+import Messages exposing (Msg(..))
 import SearchResults.Models exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -15,7 +16,7 @@ view searchResults =
             (List.length searchResults.results > 0 || searchResults.isSearching)
     in
         div [ class "search-widget" ]
-            [ viewSearchForm
+            [ viewSearchForm searchResults.formValue
             , div
                 [ classList
                     [ ( "search-results-container", True )
@@ -28,10 +29,16 @@ view searchResults =
             ]
 
 
-viewSearchForm : Html Msg
-viewSearchForm =
-    Html.form [ class "form", submitWithOptions SubmitForm ]
-        [ input [ type_ "text", onInput UpdateFormInput, placeholder "Search By Title" ] []
+viewSearchForm : SearchFormValue -> Html Msg
+viewSearchForm formValue =
+    Html.form [ class "form", submitWithOptions SEARCH_RESULTS_SubmitForm ]
+        [ input
+            [ type_ "text"
+            , onInput SEARCH_RESULTS_UpdateFormInput
+            , placeholder "Search By Title"
+            , value formValue
+            ]
+            []
         , input [ type_ "submit", value "submit" ] []
         ]
 
@@ -61,9 +68,19 @@ viewSearchResult searchResult =
             else
                 searchResult.poster
     in
-        li [ class "search-item" ]
+        li
+            [ class "search-item"
+            ]
             [ div [ class "poster", style [ ( "backgroundImage", "url(" ++ poster ++ ")" ) ] ] []
             , h3 [] [ text searchResult.title ]
+            , button
+                [ class "add-movie-button"
+                , onClick
+                    (MOVIES_AddMovie
+                        (Movie Nothing searchResult.title searchResult.year searchResult.imdbID searchResult.poster)
+                    )
+                ]
+                [ text "+ Add Movie" ]
             ]
 
 

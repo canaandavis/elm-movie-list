@@ -1,14 +1,25 @@
 var _user$project$Update$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		var _p1 = A2(_user$project$SearchResults_Update$update, _p0._0, model.searchResults);
+		var _p0 = A2(_user$project$Movies_Update$update, msg, model.movies);
+		var updatedMovies = _p0._0;
+		var moviesCmd = _p0._1;
+		var _p1 = A2(_user$project$SearchResults_Update$update, msg, model.searchResults);
 		var updatedSearchResults = _p1._0;
-		var cmd = _p1._1;
+		var searchResultsCmd = _p1._1;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
-				{searchResults: updatedSearchResults}),
-			_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Messages$SearchResultsMsg, cmd)
+				{searchResults: updatedSearchResults, movies: updatedMovies}),
+			_1: _elm_lang$core$Platform_Cmd$batch(
+				{
+					ctor: '::',
+					_0: searchResultsCmd,
+					_1: {
+						ctor: '::',
+						_0: moviesCmd,
+						_1: {ctor: '[]'}
+					}
+				})
 		};
 	});
